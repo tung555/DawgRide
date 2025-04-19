@@ -2,65 +2,95 @@ package edu.uga.cs.dawgride;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
+import androidx.core.graphics.Insets;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
+import com.google.firebase.database.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tv;
+    private BottomNavigationView bottomNavigationView;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_fragment_container), (v, insets) -> {
+            Insets systemBars = insets.getInsets(Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        // Firebase auth check
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
 
         if (currentUser == null) {
-            // Redirect to login if somehow user is null
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
             return;
         }
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance()
+        // Load initial fragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_fragment_container, new RideRequestFragment())
+                    .commit();
+        }
+
+        // Bottom nav setup
+        bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selected = null;
+            int id = item.getItemId();
+
+            if (id == R.id.nav_requests) {
+                selected = new RideRequestFragment();
+            } else if (id == R.id.nav_offers) {
+                selected = new RideOfferFragment();
+            } else if (id == R.id.nav_profile) {
+                selected = new ProfileFragment();
+            }
+
+            if (selected != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_fragment_container, selected)
+                        .commit();
+                return true;
+            }
+
+            return false;
+        });
+
+        // Optional: fetch user data if needed (e.g., to store for global use)
+        userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(currentUser.getUid());
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String username = snapshot.child("username").getValue(String.class);
-                    int ridePoints = snapshot.child("ridePoints").getValue(Integer.class);
-
-                    tv = findViewById(R.id.textView);
-                    tv.setText("Welcome, " + username + "! You have " + ridePoints + " points.");
+                if (!snapshot.exists()) {
+                    Toast.makeText(MainActivity.this, "User record not found.", Toast.LENGTH_SHORT).show();
                 }
+                // You can save data to global variable or SharedPreferences here if needed
             }
 
             @Override
