@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "53377231360",
+    "firebase_url": "https://dawgride-504b4-default-rtdb.firebaseio.com",
+    "project_id": "dawgride-504b4",
+    "storage_bucket": "dawgride-504b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53377231360:android:afbb2f1291c863821f06e5",
+        "android_client_info": {
+          "package_name": "edu.uga.cs.dawgride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUVmpR_QEHsj4jNOSJZruVx8t7luZkpoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
