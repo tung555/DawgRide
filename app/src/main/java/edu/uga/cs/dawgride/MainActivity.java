@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 selected = new RideRequestFragment();
             } else if (id == R.id.nav_offers) {
                 selected = new RideOfferFragment();
+            } else if (id == R.id.nav_post) {
+                selected = new PostFragment();
             } else if (id == R.id.nav_profile) {
                 selected = new ProfileFragment();
             }
