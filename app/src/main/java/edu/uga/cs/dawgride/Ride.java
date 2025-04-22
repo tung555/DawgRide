@@ -1,23 +1,23 @@
 package edu.uga.cs.dawgride;
 
 public class Ride {
-    public String requestId;
-    public String riderId;
+    public String rideId;
+    public String rideType;
     public String from;
     public String to;
     public String dateTime;
-    public String acceptedBy;
+    public String posterId;
 
     public Ride() {
         // Firebase needs empty constructor
     }
 
-    public Ride(String requestId, String riderId, String from, String to, String dateTime, String acceptedBy) {
-        this.requestId = requestId;
-        this.riderId = riderId;
+    public Ride(String rideId, String rideType, String from, String to, String dateTime, String posterId) {
+        this.rideId = rideId;
+        this.rideType = rideType;
         this.from = from;
         this.to = to;
         this.dateTime = dateTime;
-        this.acceptedBy = acceptedBy;
+        this.posterId = posterId;
     }
 }

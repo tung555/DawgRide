@@ -106,10 +106,11 @@ public class PostFragment extends Fragment {
                 year, month + 1, day, hour, minute);
 
         HashMap<String, Object> post = new HashMap<>();
+        post.put("rideType", type);
         post.put("from", from);
         post.put("to", to);
         post.put("dateTime", dateTime);
-        post.put("userId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        post.put("posterId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         String path = type.equals("request") ? "rideRequests" : "rideOffers";

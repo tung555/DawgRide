@@ -58,7 +58,7 @@ public class RideRequestFragment extends Fragment {
                     Ride req = snap.getValue(Ride.class);
                     if (req != null) {
                         Log.d("RideDebug", "from: " + req.from + ", to: " + req.to + ", dateTime: " + req.dateTime);
-                        req.requestId = snap.getKey(); // Store the unique key if needed
+                        req.rideId = snap.getKey(); // Store the unique key if needed
                         rideList.add(req);
                     }
                 }

@@ -57,7 +57,7 @@ public class RideOfferFragment extends Fragment {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Ride req = snap.getValue(Ride.class);
                     if (req != null) {
-                        req.requestId = snap.getKey(); // Store the unique key if needed
+                        req.rideId = snap.getKey();
                         rideList.add(req);
                     }
                 }
