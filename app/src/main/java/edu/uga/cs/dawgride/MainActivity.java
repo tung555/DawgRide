@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_post) {
                 selected = new PostFragment();
             } else if (id == R.id.nav_accepted) {
-                selected = new AcceptedRidesFragment();
+                selected = new AcceptedTabFragment();
             } else {
                 selected = new ProfileFragment();
             }

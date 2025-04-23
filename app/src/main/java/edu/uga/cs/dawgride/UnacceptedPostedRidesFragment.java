@@ -1,4 +1,3 @@
-// AcceptedRidesFragment.java
 package edu.uga.cs.dawgride;
 
 import android.os.Bundle;
@@ -20,34 +19,34 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcceptedRidesFragment extends Fragment {
+public class UnacceptedPostedRidesFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private AcceptedRideAdapter adapter;
-    private List<AcceptedRide> acceptedRides;
+    private UnacceptedRideAdapter adapter;
+    private List<Ride> rideList;
 
     private DatabaseReference ref;
     private ValueEventListener listener;
 
-    public AcceptedRidesFragment() {}
+    public UnacceptedPostedRidesFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_accepted_rides, container, false);
+        View view = inflater.inflate(R.layout.fragment_unaccepted_posted_rides, container, false);
 
-        recyclerView = view.findViewById(R.id.acceptedRidesRecycler);
+        recyclerView = view.findViewById(R.id.recycler_unaccepted);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        acceptedRides = new ArrayList<>();
-        adapter = new AcceptedRideAdapter(getContext(), acceptedRides);
+        rideList = new ArrayList<>();
+        adapter = new UnacceptedRideAdapter(getContext(), rideList);
         recyclerView.setAdapter(adapter);
 
-        loadAcceptedRides();
+        loadUnacceptedRides();
 
         return view;
     }
 
-    private void loadAcceptedRides() {
+    private void loadUnacceptedRides() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             if (getContext() != null)
@@ -55,20 +54,20 @@ public class AcceptedRidesFragment extends Fragment {
             return;
         }
 
-        ref = FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(currentUser.getUid())
-                .child("acceptedRides");
+        ref = FirebaseDatabase.getInstance().getReference();
 
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                acceptedRides.clear();
-                for (DataSnapshot snap : snapshot.getChildren()) {
-                    AcceptedRide ride = snap.getValue(AcceptedRide.class);
-                    if (ride != null) {
-                        ride.rideId = snap.getKey();
-                        acceptedRides.add(ride);
+                rideList.clear();
+                for (String node : new String[]{"rideRequests", "rideOffers"}) {
+                    DataSnapshot nodeSnapshot = snapshot.child(node);
+                    for (DataSnapshot snap : nodeSnapshot.getChildren()) {
+                        Ride ride = snap.getValue(Ride.class);
+                        if (ride != null && currentUser.getUid().equals(ride.posterId)) {
+                            ride.rideId = snap.getKey();
+                            rideList.add(ride);
+                        }
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -77,9 +76,9 @@ public class AcceptedRidesFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (getContext() != null) {
-                    Toast.makeText(getContext(), "Failed to load accepted rides", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load your posted rides", Toast.LENGTH_SHORT).show();
                 }
-                Log.e("AcceptedRides", "Firebase error", error.toException());
+                Log.e("UnacceptedRides", "Firebase error", error.toException());
             }
         };
 
