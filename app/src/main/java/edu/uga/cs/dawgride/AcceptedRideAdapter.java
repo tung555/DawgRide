@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -52,7 +50,7 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
 
         // Determine which user info to show
         if (currentUserId.equals(ride.acceptorId)) {
-            // I'm the accepter → show the poster's info
+            // I'm the accepter, show the poster's info
             if (ride.rideType.equals("offer")) {
                 holder.txtUserName.setText("Driver: " + ride.driverName);
                 holder.txtUserEmail.setText("Email: " + ride.driverEmail);
@@ -61,7 +59,7 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
                 holder.txtUserEmail.setText("Email: " + ride.riderEmail);
             }
         } else {
-            // I'm the poster → show the accepter's info
+            // I'm the poster, show the accepter's info
             if (ride.rideType.equals("offer")) {
                 holder.txtUserName.setText("Rider: " + ride.riderName);
                 holder.txtUserEmail.setText("Email: " + ride.riderEmail);
@@ -85,35 +83,35 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
-        // 1. Remove from current user's acceptedRides
+        // Remove from current user's acceptedRides
         dbRef.child("users").child(currentUserId).child("acceptedRides").child(ride.rideId).removeValue();
 
-        // 2. Add to rideHistory for both driver and rider
+        // Add to rideHistory for both driver and rider
         dbRef.child("users").child(currentUserId).child("rideHistory").child(ride.rideId).setValue(ride);
 
-        // 3. Update only one user’s points
+        // Update only one user’s points
         boolean isOffer = "offer".equalsIgnoreCase(ride.rideType);
 
         if (isOffer) {
             if (currentUserId.equals(ride.acceptorId)) {
-                // Driver clicked Complete → gain 50 points
+                // Driver clicked Complete, deduct 50 points
                 adjustPoints(dbRef, currentUserId, -50);
             } else {
-                // Rider clicked Complete → lose 50 points
+                // Rider clicked Complete, add 50 points
                 adjustPoints(dbRef, currentUserId, +50);
             }
         } else {
-            // Optional: Handle "request" logic if needed
+            // For request
             if (currentUserId.equals(ride.acceptorId)) {
-                // Driver clicked Complete → gain 50 points
+                // Driver clicked Complete, add 50 points
                 adjustPoints(dbRef, currentUserId, +50);
             } else {
-                // Rider clicked Complete → lose 50 points
+                // Rider clicked Complete, deduct 50 points
                 adjustPoints(dbRef, currentUserId, -50);
             }
         }
 
-        // 4. Remove from list
+        // Remove from list
         acceptedRides.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, acceptedRides.size());

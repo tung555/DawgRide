@@ -32,7 +32,6 @@ public class EditRideActivity extends AppCompatActivity {
         txtTime = findViewById(R.id.txt_time);
         btnSave = findViewById(R.id.btn_save);
 
-        // Get intent extras
         rideId = getIntent().getStringExtra("rideId");
         rideType = getIntent().getStringExtra("rideType");
         if (rideId == null || rideType == null) {
@@ -45,7 +44,6 @@ public class EditRideActivity extends AppCompatActivity {
                 rideType.equals("offer") ? "rideOffers" : "rideRequests"
         ).child(rideId);
 
-        // Load current ride info
         loadRideInfo();
 
         txtDate.setOnClickListener(v -> showDatePicker());

@@ -8,9 +8,7 @@ public class Ride {
     public String dateTime;
     public String posterId;
 
-    public Ride() {
-        // Firebase needs empty constructor
-    }
+    public Ride() {}
 
     public Ride(String rideId, String rideType, String from, String to, String dateTime, String posterId) {
         this.rideId = rideId;

@@ -44,7 +44,6 @@
             android:hint="To"
             android:inputType="text" />
 
-        <!-- Toggle header for date -->
         <TextView
             android:id="@+id/toggleDatePicker"
             android:layout_width="match_parent"
@@ -64,7 +63,6 @@
             android:datePickerMode="spinner"
             android:visibility="gone" />
 
-        <!-- Toggle header for time -->
         <TextView
             android:id="@+id/toggleTimePicker"
             android:layout_width="match_parent"

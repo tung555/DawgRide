@@ -17,8 +17,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.regex.Pattern;
-
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText usernameET, emailET, passwordET, confirmPasswordET;

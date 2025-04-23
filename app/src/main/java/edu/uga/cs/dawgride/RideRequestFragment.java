@@ -26,8 +26,6 @@ public class RideRequestFragment extends Fragment {
     private RecyclerView recyclerView;
     private RideAdapter adapter;
     private List<Ride> rideList;
-
-    // Firebase references for cleanup
     private DatabaseReference rideRef;
     private ValueEventListener rideListener;
 
@@ -38,14 +36,12 @@ public class RideRequestFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ride_request, container, false);
 
-        // Set up RecyclerView
         recyclerView = view.findViewById(R.id.rideRequestRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         rideList = new ArrayList<>();
         adapter = new RideAdapter(getContext(), rideList);
         recyclerView.setAdapter(adapter);
 
-        // Load ride requests from Firebase
         loadRideRequests();
 
         return view;

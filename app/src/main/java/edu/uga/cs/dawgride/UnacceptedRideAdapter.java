@@ -38,7 +38,11 @@ public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ride ride = unacceptedRides.get(position);
 
-        holder.txtRideType.setText(ride.rideType);
+        if (ride.rideType.equals("offer")) {
+            holder.txtRideType.setText("Offer");
+        } else {
+            holder.txtRideType.setText("Request");
+        }
         holder.txtFromTo.setText(ride.from + " → " + ride.to);
         holder.txtDateTime.setText(ride.dateTime);
 

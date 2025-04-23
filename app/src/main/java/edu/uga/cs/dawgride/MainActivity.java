@@ -8,7 +8,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.core.graphics.Insets;
 import androidx.fragment.app.Fragment;
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Firebase auth check
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
 
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Load initial fragment (based on intent if provided)
+        // Load initial fragment, based on intent
         if (savedInstanceState == null) {
             String fragmentToLoad = getIntent().getStringExtra("loadFragment");
             Fragment initialFragment;
@@ -65,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // Bottom nav setup
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selected = null;
@@ -94,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Optional: fetch user data if needed
         userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(currentUser.getUid());

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Tabs for navigation -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/accepted_tab_layout"
         android:layout_width="0dp"
@@ -17,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ViewPager for swiping between fragments -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/accepted_view_pager"
         android:layout_width="0dp"

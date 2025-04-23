@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //FirebaseAuth.getInstance().signOut(); //just for testing purposes
+        //FirebaseAuth.getInstance().signOut(); // just for testing purposes
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();

@@ -12,6 +12,6 @@ public class AcceptedRide {
     public String riderName;
     public String riderEmail;
 
-    public AcceptedRide() {} // Needed for Firebase
+    public AcceptedRide() {}
 }
 

@@ -1,4 +1,3 @@
-// AcceptedRidesFragment.java
 package edu.uga.cs.dawgride;
 
 import android.os.Bundle;

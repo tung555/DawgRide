@@ -68,7 +68,7 @@ public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
         String accepterId = currentUser.getUid();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
-        // Get the accepter's info from Firebase user record
+        // Get the accepter's info from Firebase
         DatabaseReference usersRef = dbRef.child("users");
 
         usersRef.child(accepterId).addListenerForSingleValueEvent(new ValueEventListener() {

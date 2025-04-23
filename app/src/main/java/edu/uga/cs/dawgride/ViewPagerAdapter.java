@@ -19,7 +19,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new UnacceptedPostedRidesFragment();
             default:
-                return new AcceptedRidesFragment(); // Fallback
+                return new AcceptedRidesFragment();
         }
     }
 
