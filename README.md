@@ -47,8 +47,3 @@ DawgRide is a full-featured ride-sharing Android app that enables users to post 
 - **Firebase Authentication** – for user login/register
 - **Firebase Realtime Database** – for storing rides, users, and history
 - **Material Design Components** – for UI elements like FAB, BottomNavigationView, etc.
-
----
-
-## 📁 Project Structure Highlights
-
