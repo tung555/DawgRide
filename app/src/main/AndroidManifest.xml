@@ -27,6 +27,7 @@
         <!-- Other Activities -->
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".RideHistoryActivity" android:exported="false" />
 
     </application>
 

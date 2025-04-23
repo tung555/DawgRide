@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,13 +20,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.util.Log;
 
 public class RideRequestFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RideAdapter adapter;
     private List<Ride> rideList;
+
+    // Firebase references for cleanup
+    private DatabaseReference rideRef;
+    private ValueEventListener rideListener;
 
     public RideRequestFragment() {}
 
@@ -48,9 +52,9 @@ public class RideRequestFragment extends Fragment {
     }
 
     private void loadRideRequests() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rideRequests");
+        rideRef = FirebaseDatabase.getInstance().getReference("rideRequests");
 
-        ref.addValueEventListener(new ValueEventListener() {
+        rideListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 rideList.clear();
@@ -67,8 +71,21 @@ public class RideRequestFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load ride requests", Toast.LENGTH_SHORT).show();
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Failed to load ride requests", Toast.LENGTH_SHORT).show();
+                }
+                Log.e("RideHistory", "Firebase error", error.toException());
             }
-        });
+        };
+
+        rideRef.addValueEventListener(rideListener);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (rideRef != null && rideListener != null) {
+            rideRef.removeEventListener(rideListener);
+        }
     }
 }

@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.core.graphics.Insets;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_fragment_container), (v, insets) -> {
             Insets systemBars = insets.getInsets(Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -46,11 +46,22 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Load initial fragment
+        // Load initial fragment (based on intent if provided)
         if (savedInstanceState == null) {
+            String fragmentToLoad = getIntent().getStringExtra("loadFragment");
+            Fragment initialFragment;
+
+            if ("profile".equals(fragmentToLoad)) {
+                initialFragment = new ProfileFragment();
+                bottomNavigationView = findViewById(R.id.bottom_nav);
+                bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+            } else {
+                initialFragment = new RideRequestFragment(); // Default
+            }
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.main_fragment_container, new RideRequestFragment())
+                    .replace(R.id.main_fragment_container, initialFragment)
                     .commit();
         }
 
@@ -66,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 selected = new RideOfferFragment();
             } else if (id == R.id.nav_post) {
                 selected = new PostFragment();
-            } else if (id == R.id.nav_profile) {
+            } else if (id == R.id.nav_accepted) {
+                selected = new AcceptedRidesFragment();
+            } else {
                 selected = new ProfileFragment();
             }
 
@@ -81,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Optional: fetch user data if needed (e.g., to store for global use)
+        // Optional: fetch user data if needed
         userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(currentUser.getUid());
@@ -92,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 if (!snapshot.exists()) {
                     Toast.makeText(MainActivity.this, "User record not found.", Toast.LENGTH_SHORT).show();
                 }
-                // You can save data to global variable or SharedPreferences here if needed
             }
 
             @Override
@@ -100,17 +112,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Could not fetch user data", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        FirebaseAuth.getInstance().signOut();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FirebaseAuth.getInstance().signOut();
     }
 }
