@@ -12,6 +12,10 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Activity that handles user login using Firebase Authentication.
+ * Users must enter a valid email and password to proceed to the main app.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailET, passwordET;
@@ -32,13 +36,19 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         txtRegisterLink = findViewById(R.id.txtRegisterLink);
 
+        // Handle login button click
         btnLogin.setOnClickListener(v -> loginUser());
 
+        // Redirect to registration page if user doesn't have an account
         txtRegisterLink.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
     }
 
+    /**
+     * Attempts to sign in the user using the email and password fields.
+     * Displays appropriate success or error message.
+     */
     private void loginUser() {
         String email = emailET.getText().toString().trim();
         String password = passwordET.getText().toString().trim();
@@ -48,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Sign in with Firebase
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if(task.isSuccessful()) {
@@ -61,11 +72,15 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Checks if user is already logged in and skips login screen if so.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
+            // Automatically redirect to main activity
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }

@@ -21,11 +21,20 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying available rides (offers or requests) in a RecyclerView.
+ */
 public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
 
     private Context context;
     private List<Ride> rides;
 
+    /**
+     * Constructor for RideAdapter.
+     *
+     * @param context the activity or fragment context
+     * @param rides   the list of Ride objects to display
+     */
     public RideAdapter(Context context, List<Ride> rides) {
         this.context = context;
         this.rides = rides;
@@ -50,6 +59,7 @@ public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
             holder.dateTime.setText("No date/time set");
         }
 
+        // Accept button triggers the acceptRide logic
         holder.acceptButton.setOnClickListener(v -> {
             String rideId = rides.get(holder.getAdapterPosition()).rideId; // Make sure you save the key in the Ride model
             acceptRide(rides.get(holder.getAdapterPosition()), rideId, ride.rideType);
@@ -61,6 +71,14 @@ public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
         return rides.size();
     }
 
+    /**
+     * Accepts a ride by storing it under both poster and acceptor's acceptedRides,
+     * then removes the ride from the original rideRequests/rideOffers list.
+     *
+     * @param ride     the Ride to accept
+     * @param rideId   the Firebase key of the ride
+     * @param rideType the type of the ride ("offer" or "request")
+     */
     private void acceptRide(Ride ride, String rideId, String rideType) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -71,18 +89,21 @@ public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
         // Get the accepter's info from Firebase
         DatabaseReference usersRef = dbRef.child("users");
 
+        // Fetch accepter’s info
         usersRef.child(accepterId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot accepterSnapshot) {
                 String accepterName = accepterSnapshot.child("username").getValue(String.class);
                 String accepterEmail = accepterSnapshot.child("email").getValue(String.class);
 
+                // Fetch poster’s info
                 usersRef.child(ride.posterId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot posterSnapshot) {
                         String posterName = posterSnapshot.child("username").getValue(String.class);
                         String posterEmail = posterSnapshot.child("email").getValue(String.class);
 
+                        // Create accepted ride record
                         AcceptedRide acceptedRide = new AcceptedRide();
                         acceptedRide.rideId = rideId;
                         acceptedRide.rideType = rideType;
@@ -142,6 +163,9 @@ public class RideAdapter extends RecyclerView.Adapter<RideAdapter.ViewHolder> {
         });
     }
 
+    /**
+     * ViewHolder class for binding ride views.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView fromTo, dateTime;
         Button acceptButton;

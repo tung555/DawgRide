@@ -21,6 +21,10 @@ import com.google.firebase.database.Transaction;
 
 import java.util.List;
 
+/**
+ * RecyclerView Adapter to display accepted rides for a user.
+ * Shows ride details and provides a button to complete a ride.
+ */
 public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapter.ViewHolder> {
 
     private Context context;
@@ -79,6 +83,16 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
         return acceptedRides.size();
     }
 
+    /**
+     * Completes an accepted ride by:
+     *  Removing it from the user's accepted rides
+     *  Adding it to the ride history
+     *  Adjusting ride points based on role and ride type
+     *  Removing the item from the adapter list
+     *
+     * @param ride  The accepted ride object to be completed
+     * @param position  The position of the ride in the adapter list
+     */
     private void completeRide(AcceptedRide ride, int position) {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
@@ -117,6 +131,14 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
         notifyItemRangeChanged(position, acceptedRides.size());
     }
 
+    /**
+     * Adjusts a user's ride points in Firebase by a given delta.
+     * Points will not drop below zero.
+     *
+     * @param dbRef  The database reference pointing to Firebase root
+     * @param userId The ID of the user whose points are to be adjusted
+     * @param delta  The amount to add or subtract from current ride points (can be negative)
+     */
     private void adjustPoints(DatabaseReference dbRef, String userId, int delta) {
         dbRef.child("users").child(userId).child("ridePoints").runTransaction(new Transaction.Handler() {
             @NonNull
@@ -137,8 +159,9 @@ public class AcceptedRideAdapter extends RecyclerView.Adapter<AcceptedRideAdapte
         });
     }
 
-
-
+    /**
+     * ViewHolder for AcceptedRide items.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtType, txtFromTo, txtUserName, txtUserEmail, txtDateTime;
         Button btnComplete;

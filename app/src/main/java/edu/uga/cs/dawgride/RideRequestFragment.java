@@ -21,6 +21,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment that displays a list of ride requests posted by riders.
+ * Retrieves data in real-time from Firebase Realtime Database.
+ */
 public class RideRequestFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -31,6 +35,14 @@ public class RideRequestFragment extends Fragment {
 
     public RideRequestFragment() {}
 
+    /**
+     * Initializes the view with a RecyclerView to list ride requests.
+     *
+     * @param inflater LayoutInflater object
+     * @param container ViewGroup container
+     * @param savedInstanceState Previous saved state
+     * @return Inflated view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +59,10 @@ public class RideRequestFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads ride requests from the "rideRequests" node in Firebase.
+     * Sets up a listener to update the list in real time.
+     */
     private void loadRideRequests() {
         rideRef = FirebaseDatabase.getInstance().getReference("rideRequests");
 
@@ -77,6 +93,9 @@ public class RideRequestFragment extends Fragment {
         rideRef.addValueEventListener(rideListener);
     }
 
+    /**
+     * Cleans up the Firebase event listener.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

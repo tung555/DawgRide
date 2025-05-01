@@ -25,6 +25,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * Fragment that allows users to post either a ride offer or a ride request.
+ * Users must input the origin, destination, and select date/time before submitting.
+ */
 public class PostFragment extends Fragment {
 
     private EditText inputFrom, inputTo;
@@ -34,6 +38,14 @@ public class PostFragment extends Fragment {
     private TextView toggleDatePicker, toggleTimePicker;
     private Button btnSubmit;
 
+    /**
+     * Inflates the post layout and sets up UI components and listeners.
+     *
+     * @param inflater           layout inflater
+     * @param container          view container
+     * @param savedInstanceState saved state
+     * @return the root view of this fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,9 +60,11 @@ public class PostFragment extends Fragment {
         toggleTimePicker = view.findViewById(R.id.toggleTimePicker);
         btnSubmit = view.findViewById(R.id.btnSubmit);
 
+        // Hide pickers by default
         datePicker.setVisibility(View.GONE);
         timePicker.setVisibility(View.GONE);
 
+        // Toggle date picker visibility
         toggleDatePicker.setOnClickListener(v -> {
             if (datePicker.getVisibility() == View.VISIBLE) {
                 datePicker.setVisibility(View.GONE);
@@ -61,6 +75,7 @@ public class PostFragment extends Fragment {
             }
         });
 
+        // Toggle time picker visibility
         toggleTimePicker.setOnClickListener(v -> {
             if (timePicker.getVisibility() == View.VISIBLE) {
                 timePicker.setVisibility(View.GONE);
@@ -76,6 +91,10 @@ public class PostFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Gathers form data and submits a ride offer/request to Firebase.
+     * Performs validation and formats data before submission.
+     */
     private void submitPost() {
         int selectedId = radioGroupType.getCheckedRadioButtonId();
         if (selectedId == -1) {
@@ -93,6 +112,7 @@ public class PostFragment extends Fragment {
             return;
         }
 
+        // Get selected date and time
         int year = datePicker.getYear();
         int month = datePicker.getMonth();
         int day = datePicker.getDayOfMonth();
@@ -102,9 +122,11 @@ public class PostFragment extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day, hour, minute);
 
+        // Format date and time string
         String dateTime = String.format(Locale.getDefault(), "%d-%02d-%02d %02d:%02d",
                 year, month + 1, day, hour, minute);
 
+        // Data to push to Firebase
         HashMap<String, Object> post = new HashMap<>();
         post.put("rideType", type);
         post.put("from", from);
@@ -112,6 +134,7 @@ public class PostFragment extends Fragment {
         post.put("dateTime", dateTime);
         post.put("posterId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
+        // Choose the correct node to push to
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         String path = type.equals("request") ? "rideRequests" : "rideOffers";
         ref.child(path).push().setValue(post)

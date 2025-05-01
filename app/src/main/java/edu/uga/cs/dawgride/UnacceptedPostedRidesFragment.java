@@ -19,6 +19,10 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment that displays all unaccepted ride posts (both requests and offers)
+ * created by the currently logged-in user.
+ */
 public class UnacceptedPostedRidesFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -30,6 +34,14 @@ public class UnacceptedPostedRidesFragment extends Fragment {
 
     public UnacceptedPostedRidesFragment() {}
 
+    /**
+     * Inflates the layout, sets up RecyclerView and triggers data loading.
+     *
+     * @param inflater           LayoutInflater used to inflate the layout
+     * @param container          Parent view
+     * @param savedInstanceState Previous instance state (if any)
+     * @return Root view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +58,10 @@ public class UnacceptedPostedRidesFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads unaccepted rides posted by the current user from both
+     * "rideRequests" and "rideOffers" nodes in Firebase.
+     */
     private void loadUnacceptedRides() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -60,10 +76,12 @@ public class UnacceptedPostedRidesFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 rideList.clear();
+                // Loop through both rideRequests and rideOffers to find unaccepted rides posted by this user
                 for (String node : new String[]{"rideRequests", "rideOffers"}) {
                     DataSnapshot nodeSnapshot = snapshot.child(node);
                     for (DataSnapshot snap : nodeSnapshot.getChildren()) {
                         Ride ride = snap.getValue(Ride.class);
+                        // Only include rides where the current user is the poster
                         if (ride != null && currentUser.getUid().equals(ride.posterId)) {
                             ride.rideId = snap.getKey();
                             rideList.add(ride);
@@ -82,9 +100,13 @@ public class UnacceptedPostedRidesFragment extends Fragment {
             }
         };
 
+        // Attach listener to the root reference to read both offer/request nodes
         ref.addValueEventListener(listener);
     }
 
+    /**
+     * Removes Firebase listener.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

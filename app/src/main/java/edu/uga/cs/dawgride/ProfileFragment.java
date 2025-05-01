@@ -20,6 +20,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Fragment that displays user profile information including greeting, ride points,
+ * and provides options to view ride history or log out.
+ */
 public class ProfileFragment extends Fragment {
 
     private TextView greetingTextView;
@@ -34,6 +38,14 @@ public class ProfileFragment extends Fragment {
 
     public ProfileFragment() {}
 
+    /**
+     * Initializes the profile UI and fetches user data from Firebase.
+     *
+     * @param inflater The LayoutInflater object to inflate views
+     * @param container The parent view that the fragment's UI should attach to
+     * @param savedInstanceState Bundle for saved state
+     * @return The fully initialized view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +62,7 @@ public class ProfileFragment extends Fragment {
         if (currentUser != null) {
             userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
 
+            // Load user profile data once logged in
             userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -70,12 +83,14 @@ public class ProfileFragment extends Fragment {
             userRef.addValueEventListener(userListener);
         }
 
+        // Navigate to ride history
         historyButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), RideHistoryActivity.class);
             userRef.removeEventListener(userListener);
             startActivity(intent);
         });
 
+        // Log out the current user
         logoutButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             if (getContext() != null)
@@ -88,6 +103,10 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Cleans up the Firebase listener when the fragment view is destroyed
+     * to prevent memory leaks or redundant callbacks.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

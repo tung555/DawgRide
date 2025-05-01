@@ -17,6 +17,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Activity that handles user registration including form validation, Firebase Auth sign-up,
+ * and saving user data to the Realtime Database.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText usernameET, emailET, passwordET, confirmPasswordET;
@@ -25,6 +29,11 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private DatabaseReference databaseRef;
 
+    /**
+     * Initializes the activity and sets up event listeners for form submission and navigation.
+     *
+     * @param savedInstanceState the saved instance state bundle.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates the registration form inputs and registers the user with Firebase Authentication.
+     * On success, the user info is also saved to the Firebase Realtime Database.
+     */
     private void registerUser() {
         String username = usernameET.getText().toString().trim();
         String email = emailET.getText().toString().trim();
@@ -74,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
                 FirebaseUser firebaseUser = auth.getCurrentUser();
                 String userId = firebaseUser.getUid();
 
+                // Store additional user info to Realtime Database
                 HashMap<String, Object> userMap = new HashMap<>();
                 userMap.put("email", email);
                 userMap.put("username", username);

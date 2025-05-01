@@ -11,6 +11,9 @@ import com.google.firebase.database.*;
 
 import java.util.Calendar;
 
+/**
+ * Activity to allow users to edit a ride's details including origin, destination, date, and time.
+ */
 public class EditRideActivity extends AppCompatActivity {
 
     private EditText editFrom, editTo;
@@ -32,6 +35,7 @@ public class EditRideActivity extends AppCompatActivity {
         txtTime = findViewById(R.id.txt_time);
         btnSave = findViewById(R.id.btn_save);
 
+        // Retrieve passed ride info
         rideId = getIntent().getStringExtra("rideId");
         rideType = getIntent().getStringExtra("rideType");
         if (rideId == null || rideType == null) {
@@ -52,6 +56,9 @@ public class EditRideActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveRideChanges());
     }
 
+    /**
+     * Loads the existing ride data from Firebase to pre-fill the form.
+     */
     private void loadRideInfo() {
         rideRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -60,7 +67,8 @@ public class EditRideActivity extends AppCompatActivity {
                 if (ride != null) {
                     editFrom.setText(ride.from);
                     editTo.setText(ride.to);
-                    txtDate.setText(ride.dateTime.split(" ")[0]); // crude split, improve as needed
+                    // Split dateTime into date and time parts
+                    txtDate.setText(ride.dateTime.split(" ")[0]);
                     txtTime.setText(ride.dateTime.split(" ", 2)[1]);
                 }
             }
@@ -72,6 +80,9 @@ public class EditRideActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves the changes made to the ride details back to Firebase.
+     */
     private void saveRideChanges() {
         String from = editFrom.getText().toString();
         String to = editTo.getText().toString();
@@ -97,6 +108,9 @@ public class EditRideActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Opens a date picker dialog to select the ride date.
+     */
     private void showDatePicker() {
         final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
@@ -105,11 +119,15 @@ public class EditRideActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year1, monthOfYear, dayOfMonth) -> {
+                    // Format date as yyyy-MM-dd
                     txtDate.setText(year1 + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
                 }, year, month, day);
         datePickerDialog.show();
     }
 
+    /**
+     * Opens a time picker dialog to select the ride time.
+     */
     private void showTimePicker() {
         final Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
@@ -117,6 +135,7 @@ public class EditRideActivity extends AppCompatActivity {
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minute1) -> {
+                    // Convert to 12-hour format with AM/PM
                     String amPm = hourOfDay >= 12 ? "PM" : "AM";
                     int displayHour = hourOfDay % 12;
                     if (displayHour == 0) displayHour = 12;

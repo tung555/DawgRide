@@ -17,11 +17,20 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying unaccepted ride posts that can be edited or deleted by the user.
+ */
 public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAdapter.ViewHolder> {
 
     private Context context;
     private List<Ride> unacceptedRides;
 
+    /**
+     * Constructor
+     *
+     * @param context          The activity or fragment context
+     * @param unacceptedRides  List of rides posted by the user that are unaccepted
+     */
     public UnacceptedRideAdapter(Context context, List<Ride> unacceptedRides) {
         this.context = context;
         this.unacceptedRides = unacceptedRides;
@@ -46,6 +55,7 @@ public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAd
         holder.txtFromTo.setText(ride.from + " → " + ride.to);
         holder.txtDateTime.setText(ride.dateTime);
 
+        // Launch the edit screen and pass current ride data
         holder.btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditRideActivity.class);
             intent.putExtra("rideId", ride.rideId);
@@ -56,7 +66,7 @@ public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAd
             context.startActivity(intent);
         });
 
-
+        // Delete the ride from the database
         holder.btnDelete.setOnClickListener(v -> {
             String rideId = ride.rideId;
             String rideType = ride.rideType;
@@ -66,6 +76,7 @@ public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAd
 
             ref.removeValue().addOnSuccessListener(unused -> {
                 int currentPosition = holder.getAdapterPosition();
+                // Only remove from list if position is still valid
                 if (currentPosition != RecyclerView.NO_POSITION && currentPosition < unacceptedRides.size()) {
                     unacceptedRides.remove(position);
                     //notifyItemRemoved(currentPosition);
@@ -83,6 +94,9 @@ public class UnacceptedRideAdapter extends RecyclerView.Adapter<UnacceptedRideAd
         return unacceptedRides.size();
     }
 
+    /**
+     * ViewHolder class that holds references to all views in a single ride item.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtFromTo, txtDateTime, txtRideType;
         Button btnEdit, btnDelete;

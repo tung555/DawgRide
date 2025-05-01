@@ -17,6 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
+/**
+ * The main activity of the app that handles navigation between fragments via a bottom navigation bar.
+ * This activity loads the appropriate fragment depending on user selection or external intent.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
@@ -24,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private DatabaseReference userRef;
 
+    /**
+     * Called when the activity is created. Initializes authentication, loads the initial fragment,
+     * and sets up the bottom navigation logic.
+     *
+     * @param savedInstanceState saved activity state from previous lifecycle (if any)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
 
+        // Redirect to login if no user is logged in
         if (currentUser == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
@@ -91,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
+        // Fetch current user's data once on activity start
         userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(currentUser.getUid());

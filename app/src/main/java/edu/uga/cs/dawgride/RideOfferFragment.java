@@ -21,6 +21,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment that displays a list of ride offers posted by drivers.
+ * Uses Firebase Realtime Database to fetch and display live updates.
+ */
 public class RideOfferFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -33,6 +37,14 @@ public class RideOfferFragment extends Fragment {
 
     public RideOfferFragment() {}
 
+    /**
+     * Inflates the view and initializes the RecyclerView with adapter and data.
+     *
+     * @param inflater           LayoutInflater object
+     * @param container          Parent view container
+     * @param savedInstanceState Saved instance state
+     * @return the root view for this fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +61,10 @@ public class RideOfferFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Fetches ride offers from Firebase and updates the RecyclerView.
+     * Attaches a ValueEventListener that listens for real-time updates.
+     */
     private void loadRideOffers() {
         offerRef = FirebaseDatabase.getInstance().getReference("rideOffers");
 
@@ -78,6 +94,9 @@ public class RideOfferFragment extends Fragment {
         offerRef.addValueEventListener(offerListener);
     }
 
+    /**
+     * Cleans up the Firebase event listener.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

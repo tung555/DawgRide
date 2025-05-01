@@ -19,6 +19,9 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment for displaying the list of accepted rides for the current user.
+ */
 public class AcceptedRidesFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -30,6 +33,14 @@ public class AcceptedRidesFragment extends Fragment {
 
     public AcceptedRidesFragment() {}
 
+    /**
+     * Inflates the fragment layout and initializes the RecyclerView and adapter.
+     *
+     * @param inflater LayoutInflater to inflate layout
+     * @param container The parent ViewGroup
+     * @param savedInstanceState Saved instance state bundle
+     * @return The root view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +57,9 @@ public class AcceptedRidesFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads the accepted rides for the current user from Firebase and listens for changes.
+     */
     private void loadAcceptedRides() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -65,6 +79,7 @@ public class AcceptedRidesFragment extends Fragment {
                 acceptedRides.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     AcceptedRide ride = snap.getValue(AcceptedRide.class);
+                    // Store the rideId from the key so we can use it later
                     if (ride != null) {
                         ride.rideId = snap.getKey();
                         acceptedRides.add(ride);
@@ -85,6 +100,9 @@ public class AcceptedRidesFragment extends Fragment {
         ref.addValueEventListener(listener);
     }
 
+    /**
+     * Removes the Firebase event listener when the view is destroyed to prevent memory leaks.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

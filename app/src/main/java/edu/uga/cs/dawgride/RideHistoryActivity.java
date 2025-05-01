@@ -17,6 +17,10 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity to display the ride history of the currently logged-in user.
+ * Allows the user to return to the Profile fragment in MainActivity.
+ */
 public class RideHistoryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -36,6 +40,7 @@ public class RideHistoryActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         btnBack = findViewById(R.id.btn_back_to_profile);
+        // Return to MainActivity and load the Profile fragment
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(RideHistoryActivity.this, MainActivity.class);
             intent.putExtra("loadFragment", "profile");
@@ -46,6 +51,9 @@ public class RideHistoryActivity extends AppCompatActivity {
         loadRideHistory();
     }
 
+    /**
+     * Loads the ride history from Firebase for the current user and updates the adapter.
+     */
     private void loadRideHistory() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance()
@@ -53,6 +61,7 @@ public class RideHistoryActivity extends AppCompatActivity {
                 .child(uid)
                 .child("rideHistory");
 
+        // Single fetch from Firebase, not a real-time listener
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -11,11 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * Adapter to display a list of past rides in the user's ride history.
+ * Populates views for ride details such as type, locations, date/time, rider, and driver info.
+ */
 public class RideHistoryAdapter extends RecyclerView.Adapter<RideHistoryAdapter.ViewHolder> {
 
     private Context context;
     private List<AcceptedRide> rideHistory;
 
+    /**
+     * Constructs a new RideHistoryAdapter.
+     *
+     * @param context      the context where the adapter is used
+     * @param rideHistory  the list of accepted rides that make up the user's ride history
+     */
     public RideHistoryAdapter(Context context, List<AcceptedRide> rideHistory) {
         this.context = context;
         this.rideHistory = rideHistory;
@@ -32,6 +42,7 @@ public class RideHistoryAdapter extends RecyclerView.Adapter<RideHistoryAdapter.
     public void onBindViewHolder(@NonNull RideHistoryAdapter.ViewHolder holder, int position) {
         AcceptedRide ride = rideHistory.get(position);
 
+        // Bind ride details to view elements
         holder.txtType.setText("Type: " + ride.rideType);
         holder.txtFromTo.setText("From: " + ride.from + " → To: " + ride.to);
         holder.txtDateTime.setText("Date & Time: " + ride.dateTime);
@@ -41,11 +52,19 @@ public class RideHistoryAdapter extends RecyclerView.Adapter<RideHistoryAdapter.
         holder.txtDriverEmail.setText("Email: " + ride.driverEmail);
     }
 
+    /**
+     * Returns the number of ride history entries.
+     *
+     * @return number of items in ride history list
+     */
     @Override
     public int getItemCount() {
         return rideHistory.size();
     }
 
+    /**
+     * ViewHolder class that holds and initializes all views for a ride history item.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtType, txtFromTo, txtDateTime, txtRider, txtDriver, txtRiderEmail, txtDriverEmail;
 
